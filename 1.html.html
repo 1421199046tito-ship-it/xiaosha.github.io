@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>可以跟我和好吗？</title>
+<style> 
+body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #ffe6f2; font-family: "Microsoft YaHei", sans-serif; overflow: hidden; } 
+.container { text-align: center; padding: 30px; border-radius: 20px; background: white; box-shadow: 0 0 20px rgba(255, 153, 204, 0.3); position: relative; z-index: 10; } 
+.kitty-icon { width: 120px; height: 120px; margin-bottom: 20px; transition: all 0.5s ease-in-out; } 
+.button-group { display: flex; gap: 20px; justify-content: center; margin-top: 30px; } 
+.button { padding: 12px 30px; border: none; border-radius: 25px; cursor: pointer; font-size: 16px; transition: all 0.3s ease; } 
+.accept-btn { background: #ff6699; color: white; font-weight: bold; } 
+.reject-btn { background: #cccccc; color: #666; position: relative; } 
+.text-pink { color: #ff6699 !important; }
+/* 花瓣飘落特效 */
+.petal { position: absolute; width: 10px; height: 10px; background-color: #ff99cc; border-radius: 50% 0; opacity: 0.8; pointer-events: none; animation: fall linear infinite; }
+@keyframes fall {
+    0% { transform: translateY(-10px) rotate(0deg); opacity: 0.8; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+/* Kitty点击动画 */
+.kitty-bounce {
+    animation: bounce 0.6s ease-in-out;
+}
+@keyframes bounce {
+    0% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.8) rotate(15deg); }
+    100% { transform: scale(1.5) rotate(0deg); }
+}
+</style>
+</head>
+<body>
+<div class="container"> 
+<img src="https://img.icons8.com/fluency/96/ff6699/hello-kitty.png" alt="Hello Kitty" class="kitty-icon"> 
+<h2 style="color: #ff6699; font-size: 24px;">可以跟我和好吗？</h2> 
+<div class="button-group"> 
+<button class="button accept-btn" onclick="handleResponse(true)">可以</button> 
+<button class="button reject-btn" onclick="handleResponse(false)">不可以</button> 
+</div>
+</div> 
+<script> 
+let rejectCount = 0; 
+let acceptScale = 1; 
+const messages = ["不可以", "真的不要", "再考虑一下", "求求你啦", "最后一次机会", "你就那么不想和我和好吗"]; 
+const kittySources = [
+'https://img.icons8.com/fluency/96/ff6699/hello-kitty.png',
+'https://img.icons8.com/fluency/96/ff99cc/hello-kitty.png',
+'https://img.icons8.com/fluency/96/ff3366/hello-kitty.png',
+'https://img.icons8.com/fluency/96/ff0066/hello-kitty.png',
+'https://img.icons8.com/fluency/96/cc0066/hello-kitty.png',
+'https://img.icons8.com/fluency/96/990066/hello-kitty.png'
+]; 
+
+// 生成花瓣飘落
+function createPetals() {
+    const petalCount = 30;
+    for (let i = 0; i < petalCount; i++) {
+        const petal = document.createElement('div');
+        petal.className = 'petal';
+        petal.style.left = `${Math.random() * 100}vw`;
+        petal.style.animationDuration = `${Math.random() * 3 + 2}s`;
+        petal.style.animationDelay = `${Math.random() * 2}s`;
+        document.body.appendChild(petal);
+        setTimeout(() => {
+            petal.remove();
+        }, 5000);
+    }
+}
+
+function handleResponse(isAccept) { 
+const kittyIcon = document.querySelector('.kitty-icon'); 
+const rejectBtn = document.querySelector('.reject-btn'); 
+const acceptBtn = document.querySelector('.accept-btn'); 
+
+if (!isAccept) { 
+    rejectCount = Math.min(rejectCount + 1, 5); 
+    rejectBtn.textContent = messages[Math.min(rejectCount, 4)]; 
+    const imgIndex = Math.min(rejectCount, kittySources.length - 2); 
+    kittyIcon.src = kittySources[imgIndex]; 
+    acceptScale *= 1.2; 
+    acceptBtn.style.transform = `scale(${acceptScale})`; 
+    rejectBtn.classList.add('text-pink'); 
+    setTimeout(() => { rejectBtn.classList.remove('text-pink'); }, 1000); 
+
+    if (rejectCount === 5) { 
+        setTimeout(() => { 
+            rejectBtn.textContent = messages[5]; 
+            alert('你就那么不想和我和好吗😢'); 
+            rejectCount = 0; 
+            acceptScale = 1; 
+            acceptBtn.style.transform = 'scale(1)'; 
+            kittyIcon.src = kittySources[0]; 
+        }, 1000); 
+    } 
+} else { 
+    // 添加Kitty弹跳动画
+    kittyIcon.classList.add('kitty-bounce');
+    setTimeout(() => {
+        kittyIcon.classList.remove('kitty-bounce');
+    }, 600);
+    // 生成花瓣
+    createPetals();
+    kittyIcon.src = kittySources[5]; 
+    document.body.style.backgroundColor = '#ffccdd'; 
+    setTimeout(() => { 
+        alert('太好了！我们和好了～💖'); 
+        acceptScale = 1; 
+        acceptBtn.style.transform = 'scale(1)'; 
+        kittyIcon.src = kittySources[0]; 
+        document.body.style.backgroundColor = '#ffe6f2'; 
+    }, 500); 
+} 
+}
+</script>
+</body>
+</html>
